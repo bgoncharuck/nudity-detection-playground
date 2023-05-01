@@ -23,7 +23,7 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
   late final String assetPath;
 
   try {
-    assetPath = await platformAssetPath(modelPath);
+    assetPath = await assetToFile(modelPath);
   } catch (e) {
     debugPrint(e.toString());
     return NudityInImageCheckResult.assetPathError;
@@ -37,12 +37,15 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
   }
 
   try {
-    final imageLabels = await ImageLabeler(
+    //
+    final imageLabeler = ImageLabeler(
       options: LocalLabelerOptions(
         modelPath: assetPath,
         confidenceThreshold: threshold,
       ),
-    ).processImage(image);
+    );
+
+    final imageLabels = await imageLabeler.processImage(image);
 
     if (imageLabels.isEmpty) {
       return NudityInImageCheckResult.noLabelFound;
@@ -64,22 +67,12 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
   return NudityInImageCheckResult.pluginInternalError;
 }
 
-Future<String> platformAssetPath(String asset) async {
-  if (Platform.isAndroid) return asset;
+Future<String> assetToFile(String asset) async {
+  final byteData = await rootBundle.load('assets/$asset');
 
-  final path = '${(await getApplicationSupportDirectory()).path}/$asset';
-  final file = File(path);
-
-  await Directory(dirname(path)).create(recursive: true);
-  if (!await file.exists()) {
-    final byteData = await rootBundle.load(asset);
-    await file.writeAsBytes(
-      byteData.buffer.asUint8List(
-        byteData.offsetInBytes,
-        byteData.lengthInBytes,
-      ),
-    );
-  }
+  final file = File('${(await getTemporaryDirectory()).path}/$asset');
+  await file.create(recursive: true);
+  await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
 
   return file.path;
 }

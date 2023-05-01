@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nuddetect/services/nudity_detector.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,11 @@ class MyHomePage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      body: const SafeArea(child: Placeholder()),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+      ),
+    );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nuddetect/services/nudity_detector.dart';
+import 'package:image_picker/image_picker.dart';
+import '/use_cases/detect_nudity.dart';
 
 void main() {
   runApp(const MyApp());
@@ -27,7 +28,20 @@ class MyHomePage extends StatelessWidget {
     return Scaffold(
       body: const SafeArea(child: Placeholder()),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () async {
+          final image = await ImagePicker().pickImage(
+            source: ImageSource.gallery,
+            imageQuality: 100,
+          );
+
+          if (image == null) {
+            debugPrint('image is null');
+            return;
+          }
+
+          final result = await const DetectNudity().execute(params: image.path);
+          debugPrint(result.toString());
+        },
       ),
     );
   }

@@ -40,7 +40,7 @@ class MyHomePage extends StatelessWidget {
           }
 
           final result = await const DetectNudity().execute(params: image.path);
-          debugPrint(result.toString());
+          debugPrint('Nudity is ${result.toString()}');
         },
       ),
     );

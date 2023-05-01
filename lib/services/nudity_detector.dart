@@ -39,6 +39,15 @@ Future<NudityInImageCheckResult> UseNudityDetectModelOnImage(
         confidenceThreshold: 0.7,
       ),
     ).processImage(image);
+
+    if (imageLabels.isEmpty) {
+      return NudityInImageCheckResult.noLabelFound;
+    }
+
+    /// 0 is safe
+    /// 1 is nudity of any body part in the list
+    /// https://github.com/notAI-tech/NudeNet
+    imageLabels.firstWhere((label) => label.index == 1);
   } catch (e) {
     debugPrint(e.toString());
   }

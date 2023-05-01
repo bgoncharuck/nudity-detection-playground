@@ -6,7 +6,6 @@ import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
 const double thresholdForMales = 0.4335938;
 const double thresholdForFemales = 0.6;
-double threshold = thresholdForFemales;
 
 enum NudityInImageCheckResult {
   nudity,
@@ -20,9 +19,11 @@ enum NudityInImageCheckResult {
 Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
   required String imagePath,
   required String modelPath,
+  bool isFemale = true,
 }) async {
   late final InputImage image;
   late final String assetPath;
+  final threshold = isFemale ? thresholdForFemales : thresholdForMales;
 
   try {
     assetPath = await assetToFile(modelPath);

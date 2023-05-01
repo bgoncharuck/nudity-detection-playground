@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
-const double threshold = 0.55;
+const double thresholdForMales = 0.4335938;
+const double thresholdForFemales = 0.7;
+double threshold = thresholdForMales;
 
 enum NudityInImageCheckResult {
   nudity,

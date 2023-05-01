@@ -69,12 +69,16 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
 }
 
 Future<String> assetToFile(String asset) async {
-  final byteData = await rootBundle.load('assets/$asset');
-
-  final file = File('${(await getTemporaryDirectory()).path}/$asset');
-  await file.create(recursive: true);
-  await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
+  if (Platform.isAndroid) {
+    return 'flutter_assets/$asset';
+  }
+  final path = '${(await getApplicationSupportDirectory()).path}/$asset';
+  await Directory(dirname(path)).create(recursive: true);
+  final file = File(path);
+  if (!await file.exists()) {
+    final byteData = await rootBundle.load(asset);
+    await file.writeAsBytes(byteData.buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  }
   return file.path;
 }
 

@@ -1,6 +1,50 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
+
+enum NudityInImageCheckResult {
+  nudity,
+  safe,
+  noLabelFound,
+  openImageFileError,
+  assetPathError,
+  pluginInternalError,
+}
+
+Future<NudityInImageCheckResult> UseNudityDetectModelOnImage(
+    {required String imagePath, required String modelPath}) async {
+  late final InputImage image;
+  late final String assetPath;
+
+  try {
+    assetPath = await platformAssetPath(modelPath);
+  } catch (e) {
+    debugPrint(e.toString());
+    return NudityInImageCheckResult.assetPathError;
+  }
+
+  try {
+    image = InputImage.fromFilePath(imagePath);
+  } catch (e) {
+    debugPrint(e.toString());
+    return NudityInImageCheckResult.openImageFileError;
+  }
+
+  try {
+    final imageLabels = await ImageLabeler(
+      options: LocalLabelerOptions(
+        modelPath: assetPath,
+        confidenceThreshold: 0.7,
+      ),
+    ).processImage(image);
+  } catch (e) {
+    debugPrint(e.toString());
+  }
+
+  return NudityInImageCheckResult.pluginInternalError;
+}
 
 Future<String> platformAssetPath(String asset) async {
   if (Platform.isAndroid) return asset;

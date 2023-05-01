@@ -15,8 +15,10 @@ enum NudityInImageCheckResult {
   pluginInternalError,
 }
 
-Future<NudityInImageCheckResult> UseNudityDetectModelOnImage(
-    {required String imagePath, required String modelPath}) async {
+Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
+  required String imagePath,
+  required String modelPath,
+}) async {
   late final InputImage image;
   late final String assetPath;
 

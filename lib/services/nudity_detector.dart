@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
+const double threshold = 0.7;
+
 enum NudityInImageCheckResult {
   nudity,
   safe,
@@ -36,7 +38,7 @@ Future<NudityInImageCheckResult> UseNudityDetectModelOnImage(
     final imageLabels = await ImageLabeler(
       options: LocalLabelerOptions(
         modelPath: assetPath,
-        confidenceThreshold: 0.7,
+        confidenceThreshold: threshold,
       ),
     ).processImage(image);
 
@@ -47,7 +49,12 @@ Future<NudityInImageCheckResult> UseNudityDetectModelOnImage(
     /// 0 is safe
     /// 1 is nudity of any body part in the list
     /// https://github.com/notAI-tech/NudeNet
-    imageLabels.firstWhere((label) => label.index == 1);
+    final foundBodyParts = imageLabels.where((label) => label.index == 1 && label.confidence >= threshold);
+    if (foundBodyParts.isNotEmpty) {
+      return NudityInImageCheckResult.nudity;
+    }
+
+    return NudityInImageCheckResult.safe;
   } catch (e) {
     debugPrint(e.toString());
   }

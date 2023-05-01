@@ -36,16 +36,16 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
     return NudityInImageCheckResult.openImageFileError;
   }
 
-  try {
-    //
-    final imageLabeler = ImageLabeler(
-      options: LocalLabelerOptions(
-        modelPath: assetPath,
-        confidenceThreshold: threshold,
-      ),
-    );
+  final imageLabeler = ImageLabeler(
+    options: LocalLabelerOptions(
+      modelPath: assetPath,
+      confidenceThreshold: threshold,
+    ),
+  );
 
+  try {
     final imageLabels = await imageLabeler.processImage(image);
+    imageLabeler.close();
 
     if (imageLabels.isEmpty) {
       return NudityInImageCheckResult.noLabelFound;
@@ -62,6 +62,7 @@ Future<NudityInImageCheckResult> useNudityDetectModelOnImage({
     return NudityInImageCheckResult.safe;
   } catch (e) {
     debugPrint(e.toString());
+    imageLabeler.close();
   }
 
   return NudityInImageCheckResult.pluginInternalError;

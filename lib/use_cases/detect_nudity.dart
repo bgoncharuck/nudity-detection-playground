@@ -8,7 +8,7 @@ class DetectNudity with IUseCase<bool, String> {
   Future<bool> execute({required String params}) async {
     final result = await useNudityDetectModelOnImage(
       imagePath: params,
-      modelPath: 'ml_models/nudity_founder.tflite',
+      modelPath: 'ml_models/nudity_finder.tflite',
     );
 
     if (result == NudityInImageCheckResult.nudity) {

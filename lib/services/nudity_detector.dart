@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:google_mlkit_image_labeling/google_mlkit_image_labeling.dart';
 
 const double thresholdForMales = 0.4335938;
-const double thresholdForFemales = 0.6;
+const double thresholdForFemales = 0.58;
 
 enum NudityInImageCheckResult {
   nudity,
